@@ -6,7 +6,38 @@
 
 require('./bootstrap');
 
-window.Vue = require('vue').default;
+window.Vue = require('vue');
+import VueRouter from 'vue-router';
+import axios from 'axios';
+import VueAxios from 'vue-axios';
+
+import Swal from 'sweetalert2';
+
+
+    
+Vue.use(VueAxios, axios, VueRouter);
+Vue.use(VueRouter);
+
+
+
+
+window.Fire = new Vue();
+window.Swal = Swal;
+
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  })
+
+  window.Toast = Toast;
+
 
 /**
  * The following block of code may be used to automatically register your
@@ -19,7 +50,7 @@ window.Vue = require('vue').default;
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+// Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -27,6 +58,25 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+let routes = [
+    { path: '/dashboard', component: require('./components/ExampleComponent.vue').default },
+
+    { path: '/*', component: require('./components/ExampleComponent.vue').default },
+];
+
+
+const router = new VueRouter({
+    mode: 'history',
+    routes // short for `routes: routes`
+});
+
+
 const app = new Vue({
     el: '#app',
+    router,
+	data(){
+		return {
+		   name: 'Majeed Opeyemi' 
+		}
+	}
 });
