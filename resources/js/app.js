@@ -60,6 +60,7 @@ const Toast = Swal.mixin({
 
 let routes = [
     { path: '/dashboard', component: require('./components/ExampleComponent.vue').default },
+    { path: '/companies', component: require('./components/Company.vue').default },
 
     { path: '/*', component: require('./components/ExampleComponent.vue').default },
 ];
