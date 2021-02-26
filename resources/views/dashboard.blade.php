@@ -12,6 +12,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Jobberman</title>
+    <!-- Scripts -->
+    <script src="{{ asset('js/app.js') }}" defer></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -209,8 +211,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <router-view></router-view>
-           
-            <!-- /.content -->
+            <!-- Content Header (Page header) -->
+            
         </div>
         <!-- /.content-wrapper -->
 
@@ -224,7 +226,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
         </footer>
     </div>
     <!-- ./wrapper -->
-	<script src="{{ asset('js/app.js') }}" defer></script>
 
 </body>
 

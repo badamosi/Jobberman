@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,8 +17,8 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $companies = Company::paginate(5);
-        return response()->json($companies, 200);
+        $companies = Company::with('admin')->paginate(5);
+        return response()->json(['data'=>$companies, 'status'=>200]);
     }
 
     /**
@@ -38,30 +39,35 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
-        $input = $request(['url', 'logo', 'company_name']);
+        $input = $request->only(['url', 'name']);
 
         $validate = $request->validate([
-            'company_name' => 'required|unique:companies|max:255|string',
+            'name' => 'required|unique:companies|max:255|string',
             'url' => 'required|url',
-            'logo' => 'required',
 
-            'name' => ['required', 'string', 'max:255'],
+            'fullname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
 
         $company = Company::create($input);
+            if($request->logo){
+                $fileName = 'company-'.$company->id.'.png';
+                $request->logo->move(public_path('companies/logo/'), $fileName);
+                $data['logo'] = $fileName;
+                Company::where(['id' => $company->id])->update($data);
+            }
 
         $user = User::create([
             'company' => $company->id,
-            'name' => $request['name'],
+            'role' => 'company',
+            'fullname' => $request['fullname'],
             'email' => $request['email'],
             'password' => Hash::make($request['password']),
         ]);
 
-        $data = array_merge($company, $user);
-
+        return response()->json(201);
         return response()->json($data, 201);
     }
 
@@ -94,34 +100,36 @@ class CompanyController extends Controller
      * @param  \App\Models\Company  $company
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Company $company)
+    public function update(Request $request, Company  $company)
     {
-        $input = $request(['url', 'logo', 'company_name']);
+        $input = $request->only(['url', 'logo', 'name']);
 
+        $selectedCompany = Company::where('id', $company->id)->with('admin')->first();  //To get company admin ID
         $validate = $request->validate([
-            'company_name' => 'required|unique:companies|max:255|string',
+            'name' => 'required|max:255|string|unique:companies,name,'.$company->id,
             'url' => 'required|url',
-            'logo' => 'required',
 
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'fullname' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$selectedCompany->admin->id],
         ]);
 
-
-        $company = Company::whereId($company->id)->with('admin')->first();
-        if($company){
-            $company->update($input);
+        
+        if( $selectedCompany){
+            if($request->logo){
+                $fileName = 'company-'.$company->id.'.png';
+                $request->logo->move(public_path('companies/logo/'), $fileName);
+                $input['logo'] = $fileName;
+            }
+            $selectedCompany->update($input);
         }
 
-        $user = User::whereId($company->admin->id)->update([
-            'name' => $request['name'],
+        $user = User::where('id', $selectedCompany->admin->id)->update([
+            'fullname' => $request['fullname'],
             'email' => $request['email'],
         ]);
 
-        $data = array_merge($company, $user);
 
-        return response()->json($data, 201);
-
+        return response()->json(201);
     }
 
     /**

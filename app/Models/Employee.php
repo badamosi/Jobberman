@@ -9,9 +9,13 @@ class Employee extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'company'];
+    protected $fillable = ['profile', 'company'];
 
     public function company(){
         return $this->belongsTo(Company::class, 'company');
+    }
+
+    public function profile(){
+        return $this->belongsTo(User::class, 'profile');
     }
 }

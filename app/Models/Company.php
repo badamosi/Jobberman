@@ -16,6 +16,6 @@ class Company extends Model
     }
 
     public function admin(){
-        return $this->belongsTo(Employee::class, 'company_id')->where('user_Type', 'company');
+        return $this->belongsTo(User::class, 'id', 'company')->where('role', 'company');
     }
 }

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class EmployeeController extends Controller
 {
@@ -14,7 +16,8 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        //
+        $employees = Employee::with('company')->with('profile')->paginate(5);
+        return response()->json(['data'=>$employees, 'status'=>200]);
     }
 
     /**
@@ -35,7 +38,25 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validate = $request->validate([
+            'fullname' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        ]);
+
+        $user = User::create([
+            'company' => $request['company'],
+            'role' => 'employee',
+            'fullname' => $request['fullname'],
+            'email' => $request['email'],
+            'password' => Hash::make('password'),
+        ]);
+
+        $input = $request->only(['company']);
+        $input['profile'] = $user->id;
+
+        $company = Employee::create($input);
+
+        return response()->json(201);
     }
 
     /**
@@ -68,8 +89,24 @@ class EmployeeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Employee $employee)
-    {
-        //
+    { 
+      
+        $validate = $request->validate([
+            'fullname' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'. $employee->profile ],
+        ]);
+
+        $user = User::whereId($employee->profile)->update([
+            'company' => $request['company'],
+            'fullname' => $request['fullname'],
+            'email' => $request['email'],
+        ]);
+
+        $input = $request->only(['company']);
+
+        $company = Employee::whereId($employee->id)->update($input);
+
+        return response()->json(201);
     }
 
     /**

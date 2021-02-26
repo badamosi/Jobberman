@@ -22,6 +22,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resources([
         'company'=>'CompanyController',
+        'employee'=>'EmployeeController',
     ]);
 
 });

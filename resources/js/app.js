@@ -6,19 +6,15 @@
 
 require('./bootstrap');
 
-window.Vue = require('vue');
+window.Vue = require('vue').default;
 import VueRouter from 'vue-router';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
 
 import Swal from 'sweetalert2';
 
-
-    
 Vue.use(VueAxios, axios, VueRouter);
 Vue.use(VueRouter);
-
-
 
 
 window.Fire = new Vue();
@@ -61,6 +57,8 @@ const Toast = Swal.mixin({
 let routes = [
     { path: '/dashboard', component: require('./components/ExampleComponent.vue').default },
     { path: '/companies', component: require('./components/Company.vue').default },
+    { path: '/coy', component: require('./components/Company.vue').default },
+    { path: '/employees', component: require('./components/Employee.vue').default },
 
     { path: '/*', component: require('./components/ExampleComponent.vue').default },
 ];
