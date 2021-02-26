@@ -13,8 +13,17 @@ import VueAxios from 'vue-axios';
 
 import Swal from 'sweetalert2';
 
+Vue.component('pagination', require('laravel-vue-pagination'));
+
+
 Vue.use(VueAxios, axios, VueRouter);
 Vue.use(VueRouter);
+
+Vue.filter('capitalize', function (value) {
+  if (!value) return ''
+  value = value.toString()
+  return value.charAt(0).toUpperCase() + value.slice(1)
+});
 
 
 window.Fire = new Vue();
@@ -55,12 +64,13 @@ const Toast = Swal.mixin({
  */
 
 let routes = [
-    { path: '/dashboard', component: require('./components/ExampleComponent.vue').default },
-    { path: '/companies', component: require('./components/Company.vue').default },
-    { path: '/coy', component: require('./components/Company.vue').default },
-    { path: '/employees', component: require('./components/Employee.vue').default },
+    { path: '/dashboard', component: require('./components/dashboard.vue').default },
+    { path: '/company', component: require('./components/Company.vue').default },
+    { path: '/employee', component: require('./components/Employee.vue').default },
+    { path: '/profile/change-password', component: require('./components/change-password.vue').default },
+    { path: '/profile', component: require('./components/dashboard.vue').default },
 
-    { path: '/*', component: require('./components/ExampleComponent.vue').default },
+    { path: '/*', component: require('./components/dashboard.vue').default },
 ];
 
 

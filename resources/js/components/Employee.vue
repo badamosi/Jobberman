@@ -66,7 +66,12 @@
                                 </div>
                             </div>
                             <!-- /.card-body -->
-                        
+                            <div class="card-footer clearfix">
+								<pagination class="float-right" :data="employees" @pagination-change-page="loadEmployees">
+									<span slot="prev-nav">&lt; Previous</span>
+									<span slot="next-nav">Next &gt;</span>
+								</pagination>
+							</div>
                         </div>
                         <!-- /.card -->
                     </div>
