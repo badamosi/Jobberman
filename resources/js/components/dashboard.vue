@@ -25,13 +25,15 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="card-tools ">
+                                    
                                     <button class="push-right btn btn-sm btn-primary"  @click='editProfile()'>Update Profile</button>
                                 </div>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
-                                <h3>Welcome!, {{ currentUser.fullname }}</h3>
-                                <h4>You're logged in as {{ currentUser.role | capitalize }}</h4>
+                                <h2>{{ currentUser.company ? currentUser.company.name : 'Admin' }}</h2>
+                                <h3>Welcome! {{ currentUser.fullname }},</h3>
+                                <h4>You're logged in as {{ currentUser.role | capitalize }} {{ currentUser.role == 'company'? 'Administrator' : '' }}</h4>
                             </div>
 
                             <!-- /.card-body -->

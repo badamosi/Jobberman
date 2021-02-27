@@ -20,11 +20,28 @@ class UserFactory extends Factory
      *
      * @return array
      */
+
+    private $number = 1;
+
     public function definition()
     {
+        
+            // switch($attributes->role){
+            //     case 'company':
+            //         $company = $number++;
+            //         break;
+            //     case 'employee':
+            //         $company =  rand (1,20);
+            //         break;
+            //     default:
+            //         $company = null;
+            // }
+
         return [
-            'name' => $this->faker->name,
+            'fullname' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
+            'company' => $this->number++,
+            'role' => 'employee',
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),

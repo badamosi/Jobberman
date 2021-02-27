@@ -24,7 +24,7 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Employee</h3>
+                                <h3 class="card-title">Employees {{ currentUser.role == 'company' ? ' of ' + currentUser.company.name : ''}}</h3>
                                 <div class="card-tools ">
                                     <button class="push-right btn btn-sm btn-primary"  @click='NewEmployee()'>New Employee</button>
                                 </div>
@@ -38,22 +38,26 @@
                                             <th style="width: 10px">#</th>
                                             <th>Name</th>
                                             <th>Email</th>
-                                            <th>Company</th>
+                                            <th v-if="currentUser.role == 'admin'">Company</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="(employee, index) in employees" :key="index">
+                                        <tr v-for="(employee, index) in employees.data" :key="index">
                                             <td>{{ index+1 }}</td>
                                             <td>{{ employee.profile.fullname }}</td>
                                             <td>{{ employee.profile.email }}</td>
-                                            <td>{{ employee.company.name }}</td>
+                                            <td v-if="currentUser.role == 'admin'">
+                                                {{ employee.company.name }}</td>
                                             <td>    
                                                 <div class="btn-group">
                                                     <button type="button" @click.prevent="editEmployee(employee)" title='Edit' class="btn btn-sm btn-primary"><i class="fa fa-edit white"></i></button>
                                                     <button type="button" @click.prevent="deleteEmployee(employee.id)" title='Delete' class="btn btn-sm btn-danger"><i class="fa fa-trash white"></i></button>
                                                 </div>
                                             </td>
+                                        </tr>
+                                        <tr>
+                                            <td v-if="!employees.data.length" colspan="5">You have not added any employee.</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -98,12 +102,12 @@
                                     class="form-control" :class="{ 'is-invalid': employeeForm.errors.has('fullname') }">
                                     <small v-if="employeeForm.errors.has('fullname')" class="text-danger">{{employeeForm.errors.errors.fullname[0]}}</small>
                         </div> 
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label>Company Name</label>
                             <input type="text" name="company" id="company" required v-model="employeeForm.company"
                                     class="form-control" :class="{ 'is-invalid': employeeForm.errors.has('company') }">
                                     <small v-if="employeeForm.errors.has('company')" class="text-danger">{{employeeForm.errors.errors.company[0]}}</small>
-                        </div> 
+                        </div>  -->
                         <div class="form-group">
                             <label>Email</label>
                             <input v-model="employeeForm.email" type="text" name="email" id="email" required 
@@ -141,6 +145,8 @@
                 loading: false,
                 fetching: false,
 
+                currentUser: '',
+
                 editingEmployee: false,
 
                 employeeForm:new Form({
@@ -154,13 +160,19 @@
         },
         methods:{
 
-            loadEmployees(){
+            loadEmployees(page=1){
                 this.loading = !this.loading
-                axios.get("api/employee").then(({data})=>{ 
-                    this.employees = data.data.data
+                axios.get("api/employee?page=" + page).then(({data})=>{ 
+                    this.employees = data.data
                     this.loading = !this.loading
                 });
 
+            },
+            getCurrentUser(){
+                axios.get('/api/user')
+                    .then(({data}) =>{
+                        this.currentUser = data
+                    });
             },
 
             NewEmployee(){
@@ -169,6 +181,7 @@
                 $('#employeeModal').modal('show');
             },
             createEmployee(){
+                this.employeeForm.company =  this.currentUser.company.id
                 this.employeeForm.post('api/employee')
                     .then(() =>{
                         Toast.fire({ icon: 'success', title: 'New Employee Added Successfully' })
@@ -204,8 +217,9 @@
        
         },
 
-        mounted() {
+        created() {
 
+            this.getCurrentUser();
             this.loadEmployees();
 
         }

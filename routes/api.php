@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +17,14 @@ use Illuminate\Support\Facades\Auth;
 */
 
 Route::middleware('auth')->get('/user', function (Request $request) {
-    return Auth::user();
+    switch(Auth::user()->role){
+        case 'admin':
+            return Auth::user();
+            break;
+        case 'company':
+            return User::with('company')->find(Auth::user()->id);
+            break;
+    }
 });
 
 Route::middleware('auth')->group(function () {

@@ -60,8 +60,7 @@ class CompanyController extends Controller
         $company = Company::create($input);
             if($request->logo){
                 $fileName = 'company-'.$company->id.'.png';
-                $request->logo->move(public_path('companies/logo/'), $fileName);
-                $data['logo'] = $fileName;
+                $data['logo'] = $request->logo->move('companies/logo/', $fileName);
                 Company::where(['id' => $company->id])->update($data);
             }
 
@@ -146,6 +145,7 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
+        User::where('company', $company->id)->delete();
         $company->delete();
         return response()->json(null, 204);
     }

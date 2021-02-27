@@ -18,20 +18,24 @@
                                 <th style="width: 10px">#</th>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Company</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <?php $n = 1 ?>
                             @foreach ($companies as $key => $company)
                                 <tr>
-                                    <td>{{ 1 }}</td>
-                                    <td>{{ $company->admin->fullname }}</td>
+                                    <td>{{ $n++ }}</td>
+                                    <td><img src="{{$company->logo}}" height="65" width="65" />{{ $company->name }}</td>
                                     <td>{{ $company->admin->email }}</td>
-                                    <td>{{ $company->name }}</td>
                                 </tr>
                             @endforeach  
                         </tbody>
                     </table>
+                    <br>
+                    
+
+                    {{$companies->links(("pagination::bootstrap-4"))}}
+
                     
                 </div>
 

@@ -50,16 +50,20 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 <p class="nav-item">Dashboard</p>
                             </router-link>
                         </li>
-                        <li class="nav-item">
-                            <router-link to="/company" class="nav-link">
-                                <p class="nav-item">Company</p>
-                            </router-link>
-                        </li>
-                        <li class="nav-item">
-                            <router-link to="/employee" class="nav-link">
-                                <p class="nav-item">Employee</p>
-                            </router-link>
-                        </li>
+                        @if(Auth::user()->role != 'employee')
+                            @if(Auth::user()->role == 'admin')
+                                <li class="nav-item">
+                                    <router-link to="/company" class="nav-link">
+                                        <p class="nav-item">Company</p>
+                                    </router-link>
+                                </li>
+                            @endif
+                            <li class="nav-item">
+                                <router-link to="/employee" class="nav-link">
+                                    <p class="nav-item">Employee</p>
+                                </router-link>
+                            </li>
+                        @endif
                        
                     </ul>
 

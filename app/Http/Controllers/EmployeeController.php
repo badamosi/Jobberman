@@ -22,7 +22,14 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        $employees = Employee::with('company')->with('profile')->paginate(5);
+        switch(Auth::user()->role){
+            case 'admin':
+                $employees = Employee::with('company')->with('profile')->paginate(10);
+                break;
+            case 'company':
+                $employees = Employee::where('company', Auth::user()->company)->with('company')->with('profile')->paginate(10);
+                break;
+        }
         return response()->json(['data'=>$employees, 'status'=>200]);
     }
 
@@ -103,7 +110,6 @@ class EmployeeController extends Controller
         ]);
 
         $user = User::whereId($employee->profile)->update([
-            'company' => $request['company'],
             'fullname' => $request['fullname'],
             'email' => $request['email'],
         ]);
@@ -123,6 +129,8 @@ class EmployeeController extends Controller
      */
     public function destroy(Employee $employee)
     {
-        //
+        User::destroy($employee->profile);
+        $employee->where('id', $employee->id)->delete();
+        return response()->json(null, 204);
     }
 }

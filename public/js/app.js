@@ -2020,6 +2020,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -2052,10 +2055,11 @@ __webpack_require__.r(__webpack_exports__);
     loadCompanies: function loadCompanies() {
       var _this = this;
 
+      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       this.loading = !this.loading;
-      axios.get("api/company").then(function (_ref) {
+      axios.get("api/company?page=" + page).then(function (_ref) {
         var data = _ref.data;
-        _this.companies = data.data.data;
+        _this.companies = data.data;
         _this.loading = !_this.loading;
       });
     },
@@ -2125,10 +2129,10 @@ __webpack_require__.r(__webpack_exports__);
 
         $('#companyModal').modal('hide');
       })["catch"](function (error) {
-        _this3.processErros(error.response.data.errors);
+        _this3.processErrors(error.response.data.errors);
       });
     },
-    processErros: function processErros(error) {
+    processErrors: function processErrors(error) {
       this.errorMsg.email = error.email ? error.email[0] : '';
       this.errorMsg.fullname = error.fullname ? error.fullname[0] : '';
       this.errorMsg.name = error.name ? error.name[0] : '';
@@ -2171,7 +2175,7 @@ __webpack_require__.r(__webpack_exports__);
 
         $('#companyModal').modal('hide');
       })["catch"](function (error) {
-        _this4.processErros(error.response.data.errors);
+        _this4.processErrors(error.response.data.errors);
       });
     },
     deleteCompany: function deleteCompany(id) {
@@ -2187,7 +2191,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     }
   },
-  mounted: function mounted() {
+  created: function created() {
     this.loadCompanies();
   }
 });
@@ -2338,6 +2342,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -2346,6 +2354,7 @@ __webpack_require__.r(__webpack_exports__);
       departments: {},
       loading: false,
       fetching: false,
+      currentUser: '',
       editingEmployee: false,
       employeeForm: new vform_src_Form__WEBPACK_IMPORTED_MODULE_0__.default({
         id: '',
@@ -2360,11 +2369,20 @@ __webpack_require__.r(__webpack_exports__);
     loadEmployees: function loadEmployees() {
       var _this = this;
 
+      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       this.loading = !this.loading;
-      axios.get("api/employee").then(function (_ref) {
+      axios.get("api/employee?page=" + page).then(function (_ref) {
         var data = _ref.data;
-        _this.employees = data.data.data;
+        _this.employees = data.data;
         _this.loading = !_this.loading;
+      });
+    },
+    getCurrentUser: function getCurrentUser() {
+      var _this2 = this;
+
+      axios.get('/api/user').then(function (_ref2) {
+        var data = _ref2.data;
+        _this2.currentUser = data;
       });
     },
     NewEmployee: function NewEmployee() {
@@ -2373,15 +2391,16 @@ __webpack_require__.r(__webpack_exports__);
       $('#employeeModal').modal('show');
     },
     createEmployee: function createEmployee() {
-      var _this2 = this;
+      var _this3 = this;
 
+      this.employeeForm.company = this.currentUser.company.id;
       this.employeeForm.post('api/employee').then(function () {
         Toast.fire({
           icon: 'success',
           title: 'New Employee Added Successfully'
         });
 
-        _this2.loadEmployees();
+        _this3.loadEmployees();
 
         $('#employeeModal').modal('hide');
       });
@@ -2396,7 +2415,7 @@ __webpack_require__.r(__webpack_exports__);
       $('#employeeModal').modal('show');
     },
     updateEmployee: function updateEmployee() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.employeeForm.put('api/employee/' + this.employeeForm.id).then(function () {
         Toast.fire({
@@ -2404,13 +2423,13 @@ __webpack_require__.r(__webpack_exports__);
           title: 'Employee Updated Successfully'
         });
 
-        _this3.loadEmployees();
+        _this4.loadEmployees();
 
         $('#employeeModal').modal('hide');
       });
     },
     deleteEmployee: function deleteEmployee(id) {
-      var _this4 = this;
+      var _this5 = this;
 
       axios["delete"]("api/employee/" + id).then(function () {
         Toast.fire({
@@ -2418,11 +2437,12 @@ __webpack_require__.r(__webpack_exports__);
           title: 'Employee Deleted Successfully'
         });
 
-        _this4.loadEmployees();
+        _this5.loadEmployees();
       });
     }
   },
-  mounted: function mounted() {
+  created: function created() {
+    this.getCurrentUser();
     this.loadEmployees();
   }
 });
@@ -2545,6 +2565,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var vform_src_Form__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vform/src/Form */ "./node_modules/vform/src/Form.js");
+//
+//
 //
 //
 //
@@ -42792,64 +42814,78 @@ var render = function() {
                     _vm._v(" "),
                     _c(
                       "tbody",
-                      _vm._l(_vm.companies, function(company, index) {
-                        return _c("tr", { key: index }, [
-                          _c("td", [_vm._v(_vm._s(index + 1))]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _c("img", {
-                              attrs: {
-                                src: "/companies/logo/" + company.logo,
-                                height: "65",
-                                width: "65"
-                              }
-                            })
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [_vm._v(_vm._s(company.name))]),
-                          _vm._v(" "),
-                          _c("td", [_vm._v(_vm._s(company.admin.fullname))]),
-                          _vm._v(" "),
-                          _c("td", [_vm._v(_vm._s(company.admin.email))]),
-                          _vm._v(" "),
-                          _c("td", [_vm._v(_vm._s(company.url))]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _c("div", { staticClass: "btn-group" }, [
-                              _c(
-                                "button",
-                                {
-                                  staticClass: "btn btn-sm btn-primary",
-                                  attrs: { type: "button", title: "Edit" },
-                                  on: {
-                                    click: function($event) {
-                                      $event.preventDefault()
-                                      return _vm.editCompany(company)
+                      [
+                        _vm._l(_vm.companies.data, function(company, index) {
+                          return _c("tr", { key: index }, [
+                            _c("td", [_vm._v(_vm._s(index + 1))]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _c("img", {
+                                attrs: {
+                                  src: company.logo,
+                                  height: "65",
+                                  width: "65"
+                                }
+                              })
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(company.name))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(company.admin.fullname))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(company.admin.email))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(company.url))]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _c("div", { staticClass: "btn-group" }, [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-sm btn-primary",
+                                    attrs: { type: "button", title: "Edit" },
+                                    on: {
+                                      click: function($event) {
+                                        $event.preventDefault()
+                                        return _vm.editCompany(company)
+                                      }
                                     }
-                                  }
-                                },
-                                [_c("i", { staticClass: "fa fa-edit white" })]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "button",
-                                {
-                                  staticClass: "btn btn-sm btn-danger",
-                                  attrs: { type: "button", title: "Delete" },
-                                  on: {
-                                    click: function($event) {
-                                      $event.preventDefault()
-                                      return _vm.deleteCompany(company.id)
+                                  },
+                                  [_c("i", { staticClass: "fa fa-edit white" })]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-sm btn-danger",
+                                    attrs: { type: "button", title: "Delete" },
+                                    on: {
+                                      click: function($event) {
+                                        $event.preventDefault()
+                                        return _vm.deleteCompany(company.id)
+                                      }
                                     }
-                                  }
-                                },
-                                [_c("i", { staticClass: "fa fa-trash white" })]
-                              )
+                                  },
+                                  [
+                                    _c("i", {
+                                      staticClass: "fa fa-trash white"
+                                    })
+                                  ]
+                                )
+                              ])
                             ])
                           ])
+                        }),
+                        _vm._v(" "),
+                        _c("tr", [
+                          !_vm.companies.data.length
+                            ? _c("td", { attrs: { colspan: "5" } }, [
+                                _vm._v("You have not added any company.")
+                              ])
+                            : _vm._e()
                         ])
-                      }),
-                      0
+                      ],
+                      2
                     )
                   ]
                 ),
@@ -43321,7 +43357,16 @@ var render = function() {
           _c("div", { staticClass: "col-md-12" }, [
             _c("div", { staticClass: "card" }, [
               _c("div", { staticClass: "card-header" }, [
-                _c("h3", { staticClass: "card-title" }, [_vm._v("Employee")]),
+                _c("h3", { staticClass: "card-title" }, [
+                  _vm._v(
+                    "Employees " +
+                      _vm._s(
+                        _vm.currentUser.role == "company"
+                          ? " of " + _vm.currentUser.company.name
+                          : ""
+                      )
+                  )
+                ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "card-tools " }, [
                   _c(
@@ -43347,56 +43392,95 @@ var render = function() {
                       "table table-bordered table-responsive1 table-hover"
                   },
                   [
-                    _vm._m(1),
+                    _c("thead", [
+                      _c("tr", [
+                        _c("th", { staticStyle: { width: "10px" } }, [
+                          _vm._v("#")
+                        ]),
+                        _vm._v(" "),
+                        _c("th", [_vm._v("Name")]),
+                        _vm._v(" "),
+                        _c("th", [_vm._v("Email")]),
+                        _vm._v(" "),
+                        _vm.currentUser.role == "admin"
+                          ? _c("th", [_vm._v("Company")])
+                          : _vm._e(),
+                        _vm._v(" "),
+                        _c("th", [_vm._v("Action")])
+                      ])
+                    ]),
                     _vm._v(" "),
                     _c(
                       "tbody",
-                      _vm._l(_vm.employees, function(employee, index) {
-                        return _c("tr", { key: index }, [
-                          _c("td", [_vm._v(_vm._s(index + 1))]),
-                          _vm._v(" "),
-                          _c("td", [_vm._v(_vm._s(employee.profile.fullname))]),
-                          _vm._v(" "),
-                          _c("td", [_vm._v(_vm._s(employee.profile.email))]),
-                          _vm._v(" "),
-                          _c("td", [_vm._v(_vm._s(employee.company.name))]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _c("div", { staticClass: "btn-group" }, [
-                              _c(
-                                "button",
-                                {
-                                  staticClass: "btn btn-sm btn-primary",
-                                  attrs: { type: "button", title: "Edit" },
-                                  on: {
-                                    click: function($event) {
-                                      $event.preventDefault()
-                                      return _vm.editEmployee(employee)
+                      [
+                        _vm._l(_vm.employees.data, function(employee, index) {
+                          return _c("tr", { key: index }, [
+                            _c("td", [_vm._v(_vm._s(index + 1))]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(_vm._s(employee.profile.fullname))
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(employee.profile.email))]),
+                            _vm._v(" "),
+                            _vm.currentUser.role == "admin"
+                              ? _c("td", [
+                                  _vm._v(
+                                    "\n                                                " +
+                                      _vm._s(employee.company.name)
+                                  )
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _c("td", [
+                              _c("div", { staticClass: "btn-group" }, [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-sm btn-primary",
+                                    attrs: { type: "button", title: "Edit" },
+                                    on: {
+                                      click: function($event) {
+                                        $event.preventDefault()
+                                        return _vm.editEmployee(employee)
+                                      }
                                     }
-                                  }
-                                },
-                                [_c("i", { staticClass: "fa fa-edit white" })]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "button",
-                                {
-                                  staticClass: "btn btn-sm btn-danger",
-                                  attrs: { type: "button", title: "Delete" },
-                                  on: {
-                                    click: function($event) {
-                                      $event.preventDefault()
-                                      return _vm.deleteEmployee(employee.id)
+                                  },
+                                  [_c("i", { staticClass: "fa fa-edit white" })]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-sm btn-danger",
+                                    attrs: { type: "button", title: "Delete" },
+                                    on: {
+                                      click: function($event) {
+                                        $event.preventDefault()
+                                        return _vm.deleteEmployee(employee.id)
+                                      }
                                     }
-                                  }
-                                },
-                                [_c("i", { staticClass: "fa fa-trash white" })]
-                              )
+                                  },
+                                  [
+                                    _c("i", {
+                                      staticClass: "fa fa-trash white"
+                                    })
+                                  ]
+                                )
+                              ])
                             ])
                           ])
+                        }),
+                        _vm._v(" "),
+                        _c("tr", [
+                          !_vm.employees.data.length
+                            ? _c("td", { attrs: { colspan: "5" } }, [
+                                _vm._v("You have not added any employee.")
+                              ])
+                            : _vm._e()
                         ])
-                      }),
-                      0
+                      ],
+                      2
                     )
                   ]
                 ),
@@ -43481,7 +43565,7 @@ var render = function() {
               ]
             ),
             _vm._v(" "),
-            _vm._m(2)
+            _vm._m(1)
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "modal-body" }, [
@@ -43521,44 +43605,6 @@ var render = function() {
               _vm.employeeForm.errors.has("fullname")
                 ? _c("small", { staticClass: "text-danger" }, [
                     _vm._v(_vm._s(_vm.employeeForm.errors.errors.fullname[0]))
-                  ])
-                : _vm._e()
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "form-group" }, [
-              _c("label", [_vm._v("Company Name")]),
-              _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.employeeForm.company,
-                    expression: "employeeForm.company"
-                  }
-                ],
-                staticClass: "form-control",
-                class: { "is-invalid": _vm.employeeForm.errors.has("company") },
-                attrs: {
-                  type: "text",
-                  name: "company",
-                  id: "company",
-                  required: ""
-                },
-                domProps: { value: _vm.employeeForm.company },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.$set(_vm.employeeForm, "company", $event.target.value)
-                  }
-                }
-              }),
-              _vm._v(" "),
-              _vm.employeeForm.errors.has("company")
-                ? _c("small", { staticClass: "text-danger" }, [
-                    _vm._v(_vm._s(_vm.employeeForm.errors.errors.company[0]))
                   ])
                 : _vm._e()
             ]),
@@ -43679,24 +43725,6 @@ var staticRenderFns = [
             ])
           ])
         ])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("tr", [
-        _c("th", { staticStyle: { width: "10px" } }, [_vm._v("#")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Name")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Email")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Company")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Action")])
       ])
     ])
   },
@@ -43985,14 +44013,28 @@ var render = function() {
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "card-body" }, [
+                _c("h2", [
+                  _vm._v(
+                    _vm._s(
+                      _vm.currentUser.company
+                        ? _vm.currentUser.company.name
+                        : "Admin"
+                    )
+                  )
+                ]),
+                _vm._v(" "),
                 _c("h3", [
-                  _vm._v("Welcome!, " + _vm._s(_vm.currentUser.fullname))
+                  _vm._v("Welcome! " + _vm._s(_vm.currentUser.fullname) + ",")
                 ]),
                 _vm._v(" "),
                 _c("h4", [
                   _vm._v(
                     "You're logged in as " +
-                      _vm._s(_vm._f("capitalize")(_vm.currentUser.role))
+                      _vm._s(_vm._f("capitalize")(_vm.currentUser.role)) +
+                      " " +
+                      _vm._s(
+                        _vm.currentUser.role == "company" ? "Administrator" : ""
+                      )
                   )
                 ])
               ])

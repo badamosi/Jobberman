@@ -45,9 +45,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="(company, index) in companies" :key="index">
+                                        <tr v-for="(company, index) in companies.data" :key="index">
                                             <td>{{ index+1 }}</td>
-                                            <td><img v-bind:src="'/companies/logo/'+company.logo" height="65" width="65" /></td>
+                                            <td><img v-bind:src="company.logo" height="65" width="65" /></td>
                                             <td>{{ company.name }}</td>
                                             <td>{{ company.admin.fullname }}</td>
                                             <td>{{ company.admin.email }}</td>
@@ -58,6 +58,9 @@
                                                     <button type="button" @click.prevent="deleteCompany(company.id)" title='Delete' class="btn btn-sm btn-danger"><i class="fa fa-trash white"></i></button>
                                                 </div>
                                             </td>
+                                        </tr>
+                                        <tr>
+                                            <td v-if="!companies.data.length" colspan="5">You have not added any company.</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -190,10 +193,10 @@
         },
         methods:{
 
-            loadCompanies(){
+            loadCompanies(page = 1){
                 this.loading = !this.loading
-                axios.get("api/company").then(({data})=>{ 
-                    this.companies = data.data.data
+                axios.get("api/company?page=" + page).then(({data})=>{ 
+                    this.companies = data.data
                     this.loading = !this.loading
                 });
             },
@@ -253,12 +256,12 @@
                          $('#companyModal').modal('hide');
                     }).catch((error) => {
                         
-                        this.processErros(error.response.data.errors)
+                        this.processErrors(error.response.data.errors)
                     });
 
 
             },
-            processErros(error){
+            processErrors(error){
                 this.errorMsg.email =  error.email ? error.email[0] : ''
                 this.errorMsg.fullname =  error.fullname ? error.fullname[0] : ''
                 this.errorMsg.name =  error.name ? error.name[0] : ''
@@ -297,7 +300,7 @@
                     $('#companyModal').modal('hide');
                 }).catch((error) => {
                     
-                    this.processErros(error.response.data.errors)
+                    this.processErrors(error.response.data.errors)
                 });
                 
 
@@ -313,7 +316,7 @@
        
         },
 
-        mounted() {
+        created() {
 
             this.loadCompanies();
 
